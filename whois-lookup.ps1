@@ -27,7 +27,9 @@
 #>
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [string]$Target
+    [string]$Target,
+    # Internal switch used by Pester tests to load functions without running the dispatch.
+    [switch]$TestMode
 )
 
 # Normalize accidental URL input into a bare hostname.
@@ -89,10 +91,13 @@ function Lookup-IP($ip) {
 }
 
 # Route IPv4/IPv6 targets to RDAP. Everything else is treated as a domain.
-if ($Target -match '^\d{1,3}(\.\d{1,3}){3}$' -or $Target -match '^[0-9a-fA-F:]+:[0-9a-fA-F:]+$') {
-    Write-Host "`nIP Lookup: $Target`n" -ForegroundColor Cyan
-    Lookup-IP $Target | Format-List
-} else {
-    Write-Host "`nDomain Lookup: $Target`n" -ForegroundColor Cyan
-    Lookup-Domain $Target | Format-List
+# -TestMode bypasses dispatch so Pester can dot-source and test functions in isolation.
+if (-not $TestMode) {
+    if ($Target -match '^\d{1,3}(\.\d{1,3}){3}$' -or $Target -match '^[0-9a-fA-F:]+:[0-9a-fA-F:]+$') {
+        Write-Host "`nIP Lookup: $Target`n" -ForegroundColor Cyan
+        Lookup-IP $Target | Format-List
+    } else {
+        Write-Host "`nDomain Lookup: $Target`n" -ForegroundColor Cyan
+        Lookup-Domain $Target | Format-List
+    }
 }
