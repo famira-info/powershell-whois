@@ -1,0 +1,21 @@
+# PowerShell transcripts and logs
+*.log
+*.transcript
+
+# Temporary files
+*.tmp
+*~
+Thumbs.db
+
+# PowerShell compiled script cache
+__pycache__/
+*.pyc
+
+# Module directories (installed via Install-Module, not tracked in this repo)
+Modules/
+
+# VS Code workspace settings
+.vscode/
+
+# Windows Explorer artifacts
+desktop.ini
